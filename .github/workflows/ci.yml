@@ -1,0 +1,32 @@
+name: CI
+
+# Runs build and test on every push to all branches
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - v*
+
+env:
+  CI: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Export build version
+        run: echo "::set-env name=VERSION::$(echo $GITHUB_REF | cut -d/ -f 3)"
+      - run: docker-compose build

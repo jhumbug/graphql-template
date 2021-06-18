@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  REPLACE_ME-dev:
+    image: 981181454727.dkr.ecr.us-east-1.amazonaws.com/REPLACE_ME:${VERSION}
+    environment:
+      REDIS_HOST: REPLACE_ME
+      NODE_ENV: production
+      PORT: 4000

@@ -1,0 +1,6 @@
+.git*
+.env*
+.iac
+.vscode
+dist
+node_modules

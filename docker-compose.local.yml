@@ -1,0 +1,27 @@
+version: "3.7"
+
+volumes:
+  node:
+
+services:
+  app:
+    build:
+      context: .
+      target: development
+    init: true
+    tty: true
+    restart: always
+    env_file: .env
+    environment:
+      REDIS_HOST: redis
+    ports:
+      - "4000:4000"
+      - "9229:9229"
+    volumes:
+      - .:/usr/local/gql/app:delegated
+      - ./package.json:/usr/local/gql/package.json
+      - ./yarn.lock:/usr/local/gql/yarn.lock
+      - node:/usr/local/gql/node_modules
+
+  redis:
+    image: redis:5

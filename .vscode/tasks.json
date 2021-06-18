@@ -1,0 +1,43 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Reinstall node_modules in Docker Local",
+      "detail": "Install dependencies without rebuilding container",
+      "type": "shell",
+      "command": "docker-compose -f docker-compose.local.yml exec -w /usr/local/aswim app yarn install",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      }
+    },
+    {
+      "label": "Run Bash in Docker Local",
+      "detail": "Bash into local development server Docker container",
+      "type": "shell",
+      "command": "docker-compose -f docker-compose.local.yml exec app bash",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "generate --watch",
+      "problemMatcher": [],
+      "label": "npm: generate",
+      "detail": "graphql-codegen",
+      "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+overwrite: true
+schema: src/graphql/schema.graphql
+
+config:
+  scalars:
+    Datetime: string
+    Sort: string
+
+generates:
+  ./src/graphql/__generated__/resolver-types.ts:
+    config:
+      contextType: ../context#Context
+      useIndexSignature: true
+    plugins:
+      - add: |
+          /* eslint-disable */
+          // This file was automatically generated and should not be edited.
+      - typescript
+      - typescript-resolvers

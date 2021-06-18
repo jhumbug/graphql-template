@@ -1,0 +1,203 @@
+name: Create release
+
+# * Deploy to dev on every prerelease tag (v1.2.4-pre.0)
+# * Deploy to dev, staging, and prod on every release tag (v3.4.5)
+
+# Required Secrets:
+# * APOLLO_KEY - The API key for pushing updates to Apollo Engine
+# * AWS_ACCESS_KEY_ID - The AWS access key ID for deploying to ECR and Fargate
+# * AWS_SECRET_ACCESS_KEY - The AWS secret access key for deploying to ECR and Fargate
+# * SLACK_BOT_USER_OAUTH_ACCESS_TOKEN - The Slack access token for posting notifications
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  # build and push image to ECR
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Export build version
+        run: echo "::set-env name=VERSION::$(echo $GITHUB_REF | cut -d/ -f 3)"
+
+      - name: Build and push image to Amazon ECR
+        run: |
+          docker-compose build
+          docker-compose push
+
+      - name: Logout of Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+  deploy-dev:
+    needs: [build]
+    name: Deploy to dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install node dependencies
+        run: |
+          yarn install --frozen-lockfile
+          echo "::add-path::$(yarn bin)"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install latest fargate-cli
+        run: |
+          curl -s get-fargate.turnerlabs.io | sh
+          fargate --version
+
+      - name: Export build version
+        run: echo "::set-env name=VERSION::$(echo $GITHUB_REF | cut -d/ -f 3)"
+
+      - name: Deploy to Fargate
+        working-directory: ./.iac/env/dev
+        run: fargate service deploy -f docker-compose.yml --wait-for-service
+
+      - name: Push service updates to Apollo Engine
+        env:
+          APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+        run: |
+          apollo service:push \
+            --serviceName=REPLACE_ME \
+            --serviceURL=http://REPLACE_ME/graphql \
+            --tag=dev
+
+      - name: Post notification to Slack
+        uses: archive/github-actions-slack@master
+        continue-on-error: true
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: REPLACE_ME
+          slack-text: "*${{ github.repository }}* *<https://github.com/${{ github.repository }}/tree/${{ github.sha }}|${{ env.VERSION }}>* was deployed to *dev*"
+
+  deploy-staging:
+    needs: [build]
+    name: Deploy to staging
+    if: contains(github.ref, '-') == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install node dependencies
+        run: |
+          yarn install --frozen-lockfile
+          echo "::add-path::$(yarn bin)"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install latest fargate-cli
+        run: |
+          curl -s get-fargate.turnerlabs.io | sh
+          fargate --version
+
+      - name: Export build version
+        run: echo "::set-env name=VERSION::$(echo $GITHUB_REF | cut -d/ -f 3)"
+
+      - name: Deploy to Fargate
+        working-directory: ./.iac/env/staging
+        run: fargate service deploy -f docker-compose.yml --wait-for-service
+
+      - name: Push service updates to Apollo Engine
+        env:
+          APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+        run: |
+          apollo service:push \
+            --serviceName=REPLACE_ME \
+            --serviceURL=http://REPLACE_ME/graphql \
+            --tag=staging
+
+      - name: Post notification to Slack
+        uses: archive/github-actions-slack@master
+        continue-on-error: true
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: REPLACE_ME
+          slack-text: "*${{ github.repository }}* *<https://github.com/${{ github.repository }}/tree/${{ github.sha }}|${{ env.VERSION }}>* was deployed to *staging*"
+
+  deploy-prod:
+    needs: [build]
+    name: Deploy to prod
+    if: contains(github.ref, '-') == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install node dependencies
+        run: |
+          yarn install --frozen-lockfile
+          echo "::add-path::$(yarn bin)"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install latest fargate-cli
+        run: |
+          curl -s get-fargate.turnerlabs.io | sh
+          fargate --version
+
+      - name: Export build version
+        run: echo "::set-env name=VERSION::$(echo $GITHUB_REF | cut -d/ -f 3)"
+
+      - name: Deploy to Fargate
+        working-directory: ./.iac/env/prod
+        run: fargate service deploy -f docker-compose.yml --wait-for-service
+
+      - name: Push service updates to Apollo Engine
+        env:
+          APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+        run: |
+          apollo service:push \
+            --serviceName=REPLACE_ME \
+            --serviceURL=http://REPLACE_ME/graphql \
+            --tag=prod
+
+      - name: Post notification to Slack
+        uses: archive/github-actions-slack@master
+        continue-on-error: true
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: REPLACE_ME
+          slack-text: "*${{ github.repository }}* *<https://github.com/${{ github.repository }}/tree/${{ github.sha }}|${{ env.VERSION }}>* was deployed to *prod*"

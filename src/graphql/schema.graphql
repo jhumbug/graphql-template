@@ -1,0 +1,7 @@
+scalar Datetime
+scalar Sort
+
+type Query {
+    # remove when adding your own fields
+    myField: String
+}

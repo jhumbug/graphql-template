@@ -1,10 +1,12 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
-
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { Context } from '../context';
+import { Context } from '../src/graphql/context';
 export type Maybe<T> = T | null;
-
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -12,14 +14,36 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Datetime: string;
-  Sort: string;
+  Datetime: any;
+  Sort: any;
 };
 
 
 export type Query = {
   __typename?: 'Query';
-  myField?: Maybe<Scalars['String']>;
+  myField: Maybe<Scalars['String']>;
+  rickAndMorty: Maybe<RickAndMortyCharacter>;
+};
+
+
+export type QueryRickAndMortyArgs = {
+  id: Maybe<Scalars['Int']>;
+};
+
+export type RickAndMortyCharacter = {
+  __typename?: 'RickAndMortyCharacter';
+  id: Scalars['ID'];
+  name: Maybe<Scalars['String']>;
+  status: Maybe<Scalars['String']>;
+  species: Maybe<Scalars['String']>;
+  origin: Maybe<RickAndMortyCharacterOrigin>;
+  image: Maybe<Scalars['String']>;
+};
+
+export type RickAndMortyCharacterOrigin = {
+  __typename?: 'RickAndMortyCharacterOrigin';
+  name: Maybe<Scalars['String']>;
+  url: Maybe<Scalars['String']>;
 };
 
 
@@ -88,7 +112,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -102,20 +126,28 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  RickAndMortyCharacter: ResolverTypeWrapper<RickAndMortyCharacter>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  RickAndMortyCharacterOrigin: ResolverTypeWrapper<RickAndMortyCharacterOrigin>;
   Sort: ResolverTypeWrapper<Scalars['Sort']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Datetime: Scalars['Datetime'];
   Query: {};
   String: Scalars['String'];
-  Boolean: Scalars['Boolean'];
-  Datetime: Scalars['Datetime'];
+  Int: Scalars['Int'];
+  RickAndMortyCharacter: RickAndMortyCharacter;
+  ID: Scalars['ID'];
+  RickAndMortyCharacterOrigin: RickAndMortyCharacterOrigin;
   Sort: Scalars['Sort'];
+  Boolean: Scalars['Boolean'];
 }>;
 
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
@@ -123,7 +155,24 @@ export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  myField?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  myField: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rickAndMorty: Resolver<Maybe<ResolversTypes['RickAndMortyCharacter']>, ParentType, ContextType, RequireFields<QueryRickAndMortyArgs, never>>;
+}>;
+
+export type RickAndMortyCharacterResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RickAndMortyCharacter'] = ResolversParentTypes['RickAndMortyCharacter']> = ResolversObject<{
+  id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  species: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  origin: Resolver<Maybe<ResolversTypes['RickAndMortyCharacterOrigin']>, ParentType, ContextType>;
+  image: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type RickAndMortyCharacterOriginResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RickAndMortyCharacterOrigin'] = ResolversParentTypes['RickAndMortyCharacterOrigin']> = ResolversObject<{
+  name: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface SortScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Sort'], any> {
@@ -131,9 +180,11 @@ export interface SortScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
-  Datetime?: GraphQLScalarType;
-  Query?: QueryResolvers<ContextType>;
-  Sort?: GraphQLScalarType;
+  Datetime: GraphQLScalarType;
+  Query: QueryResolvers<ContextType>;
+  RickAndMortyCharacter: RickAndMortyCharacterResolvers<ContextType>;
+  RickAndMortyCharacterOrigin: RickAndMortyCharacterOriginResolvers<ContextType>;
+  Sort: GraphQLScalarType;
 }>;
 
 

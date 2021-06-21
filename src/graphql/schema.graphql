@@ -2,6 +2,22 @@ scalar Datetime
 scalar Sort
 
 type Query {
-    # remove when adding your own fields
+    # REPLACE_ME
     myField: String
+    rickAndMorty(id: Int): RickAndMortyCharacter
+}
+
+type RickAndMortyCharacter @cacheControl(maxAge: 20) {
+    id: ID!
+    name: String
+    status: String
+    species: String
+    origin: RickAndMortyCharacterOrigin
+    image: String
+    # location(first: Int, after: String): LocationConnection
+}
+
+type RickAndMortyCharacterOrigin {
+    name: String
+    url: String
 }

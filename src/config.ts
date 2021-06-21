@@ -8,6 +8,9 @@ const schema = Joi.object({
     PORT: Joi.number().port().default(4000),
     REDIS_HOST: Joi.string().hostname().required(),
     REDIS_PORT: Joi.number().port().default(6379),
+
+    // REPLACE_ME
+    RICK_AND_MORTY_BASE_URL: Joi.string().default('https://rickandmortyapi.com/api')
 });
 
 const { error, value } = schema.validate(process.env, { convert: true, stripUnknown: true });
@@ -50,3 +53,8 @@ export const REDIS_PORT: number = value.REDIS_PORT;
  * The application port
  */
 export const PORT: number = value.PORT;
+
+/**
+ * REPLACE_ME
+ */
+export const RICK_AND_MORTY_BASE_URL: string = value.RICK_AND_MORTY_BASE_URL;

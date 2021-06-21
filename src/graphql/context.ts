@@ -2,8 +2,13 @@ import { ContextFunction } from 'apollo-server-core';
 import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
 import { DataSources as ApolloDataSources } from 'apollo-server-core/dist/graphqlOptions';
 
+// REPLACE_ME
+import RickAndMorty from './data/RickAndMorty';
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DataSources extends ApolloDataSources<BaseContext> {}
+export interface DataSources extends ApolloDataSources<BaseContext> {
+    rickAndMorty: RickAndMorty;
+}
 
 export interface BaseContext {
     now: Date;
@@ -20,6 +25,6 @@ export const createContext: ContextFunction<ExpressContext, BaseContext> = (ctx)
     };
 };
 
-export const createDataSources = (): DataSources => {
-    return {};
-};
+export const createDataSources = (): DataSources => ({
+    rickAndMorty: new RickAndMorty(),
+})

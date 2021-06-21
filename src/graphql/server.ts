@@ -24,11 +24,14 @@ export function createGraphQLServer(): ApolloServer {
 
     return new ApolloServer({
         cache,
+        cacheControl: {
+            defaultMaxAge: 60,
+        },
         context: createContext,
         dataSources: createDataSources,
         persistedQueries: { cache },
         resolvers,
-        typeDefs: gql(typeDefs)
+        typeDefs: gql(typeDefs),
     });
 }
 

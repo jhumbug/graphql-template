@@ -27,7 +27,8 @@ export function createGraphQLServer(): ApolloServer {
         context: createContext,
         dataSources: createDataSources,
         persistedQueries: { cache },
-        schema: { resolvers, typeDefs: gql(typeDefs) },
+        resolvers,
+        typeDefs: gql(typeDefs)
     });
 }
 

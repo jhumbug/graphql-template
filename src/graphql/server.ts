@@ -4,11 +4,12 @@ import path from 'path';
 import { ApolloServer, gql } from 'apollo-server-express';
 import { RedisCache } from 'apollo-server-cache-redis';
 import { Router } from 'express';
+import responseCachePlugin from 'apollo-server-plugin-response-cache';
+import 'apollo-cache-control';
 
 import { REDIS_HOST, REDIS_PORT, GRAPHQL_PATH } from '../config';
-
 import { createContext, createDataSources } from './context';
-import resolvers from './resolvers';
+import * as resolvers from './resolvers';
 
 const typeDefs = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8');
 
@@ -32,6 +33,7 @@ export function createGraphQLServer(): ApolloServer {
         persistedQueries: { cache },
         resolvers,
         typeDefs: gql(typeDefs),
+        plugins: [responseCachePlugin()],
     });
 }
 

@@ -19,6 +19,12 @@ export type Scalars = {
 };
 
 
+export enum CacheControlScope {
+  Public = 'PUBLIC',
+  Private = 'PRIVATE'
+}
+
+
 export type Query = {
   __typename?: 'Query';
   myField: Maybe<Scalars['String']>;
@@ -126,6 +132,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  CacheControlScope: CacheControlScope;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -149,6 +156,11 @@ export type ResolversParentTypes = ResolversObject<{
   Sort: Scalars['Sort'];
   Boolean: Scalars['Boolean'];
 }>;
+
+export type CacheControlDirectiveArgs = {   maxAge: Maybe<Scalars['Int']>;
+  scope: Maybe<CacheControlScope>; };
+
+export type CacheControlDirectiveResolver<Result, Parent, ContextType = Context, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
   name: 'Datetime';
@@ -193,3 +205,13 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = Context> = ResolversObject<{
+  cacheControl: CacheControlDirectiveResolver<any, any, ContextType>;
+}>;
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = Context> = DirectiveResolvers<ContextType>;

@@ -1,6 +1,6 @@
 ### DEVELOPMENT PHASE ###
 
-FROM node:12-alpine AS development
+FROM node:14-alpine AS development
 
 ARG PORT=4000
 EXPOSE $PORT 9229
@@ -33,7 +33,7 @@ RUN yarn build && \
 
 ### PRODUCTION PHASE ###
 
-FROM node:12-alpine
+FROM node:14-alpine
 
 ARG PORT=4000
 EXPOSE $PORT

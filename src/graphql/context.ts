@@ -4,10 +4,12 @@ import { DataSources as ApolloDataSources } from 'apollo-server-core/dist/graphq
 
 // REPLACE_ME
 import RickAndMorty from './data/RickAndMorty';
+import ToDos from './data/ToDos';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DataSources extends ApolloDataSources<BaseContext> {
     rickAndMorty: RickAndMorty;
+    toDos: ToDos;
 }
 
 export interface BaseContext {
@@ -27,4 +29,5 @@ export const createContext: ContextFunction<ExpressContext, BaseContext> = (ctx)
 
 export const createDataSources = (): DataSources => ({
     rickAndMorty: new RickAndMorty(),
+    toDos: new ToDos()
 })

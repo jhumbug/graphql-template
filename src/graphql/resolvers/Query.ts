@@ -12,5 +12,15 @@ export const Query: Record<string, GraphQLFieldResolver<void, Context>> = {
         } else {
             return {}; // error
         }
+    },
+    toDos(_, __, { dataSources }) {
+        return dataSources.toDos.getToDos();
+    },
+    toDo(_, { id }, { dataSources }) {
+        if (id) {
+            return dataSources.toDos.getToDo(id);
+        } else {
+            return {}; // error
+        }
     }
 };

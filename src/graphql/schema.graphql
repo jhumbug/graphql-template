@@ -19,6 +19,15 @@ type Query {
     # REPLACE_ME
     myField: String
     rickAndMorty(id: Int): RickAndMortyCharacter
+    toDos: [ToDo]
+    toDo(id: Int): ToDo
+}
+
+type ToDo @cacheControl(maxAge: 20) {
+    id: ID!
+    userId: String
+    title: String
+    completed: Boolean
 }
 
 type RickAndMortyCharacter @cacheControl(maxAge: 20) {

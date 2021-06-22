@@ -18,7 +18,7 @@ type PageInfo {
 type Query {
     # REPLACE_ME
     myField: String
-    rickAndMorty(id: String): RickAndMortyCharacter
+    rickAndMorty(id: Int): RickAndMortyCharacter
 }
 
 type RickAndMortyCharacter @cacheControl(maxAge: 20) {

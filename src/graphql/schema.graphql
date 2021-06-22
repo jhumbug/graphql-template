@@ -8,10 +8,17 @@ enum CacheControlScope {
     PRIVATE
 }
 
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
+
 type Query {
     # REPLACE_ME
     myField: String
-    rickAndMorty(id: Int): RickAndMortyCharacter
+    rickAndMorty(id: String): RickAndMortyCharacter
 }
 
 type RickAndMortyCharacter @cacheControl(maxAge: 20) {
@@ -21,10 +28,29 @@ type RickAndMortyCharacter @cacheControl(maxAge: 20) {
     species: String
     origin: RickAndMortyCharacterOrigin
     image: String
-    # location(first: Int, after: String): LocationConnection
+    location: RickAndMortyLocation
+    # location(first: Int, after: String): RickAndMortyLocationConnection
 }
 
 type RickAndMortyCharacterOrigin {
     name: String
     url: String
 }
+
+type RickAndMortyLocation {
+    name: String
+    dimension: String
+    url: String
+}
+
+# type RickAndMortyLocationEdge {
+#     cursor: String!
+#     node: RickAndMortyLocation
+# }
+
+# type RickAndMortyLocationConnection {
+#     pageInfo: PageInfo!
+#     edges: [RickAndMortyLocationEdge]
+#     nodes: [RickAndMortyLocation]
+#     totalCount: Int
+# }

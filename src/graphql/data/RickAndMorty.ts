@@ -28,23 +28,35 @@ export interface CharacterResult {
     image: string;
 }
 
+export interface LocationResult {
+    id: number;
+    name: string;
+    dimension: string;
+}
+
 
 export default class RickAndMorty extends RESTDataSource<BaseContext> {
     baseURL = RICK_AND_MORTY_BASE_URL;
 
-    async getCharacter(id: number) {
+    async getCharacter(id: string) {
         if (!id) {
             return;
         }
         try {
-            const resp = await this.get(`/character/${id}`, undefined, {
-                // cacheOptions: {
-                //     ttl: ONE_DAY,
-                // },
-                // headers: {
-                //     Authorization: `Bearer ${token}`,
-                // },
-            });
+            const resp: CharacterResult = await this.get(`/character/${id}`, undefined, {});
+
+            return resp;
+        } catch (error) {
+            return;
+        }
+    }
+
+    async getLocation(id: string) {
+        if (!id) {
+            return;
+        }
+        try {
+            const resp: LocationResult = await this.get(`/location/${id}`, undefined, {});
 
             return resp;
         } catch (error) {

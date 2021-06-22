@@ -1,9 +1,16 @@
-import { QueryResolvers } from '../__generated__/resolver-types';
+// import { QueryResolvers } from '../__generated__/resolver-types';
+import { GraphQLFieldResolver } from 'graphql';
 
-export const Query: QueryResolvers = {
+import { Context } from '../context';
+
+export const Query: Record<string, GraphQLFieldResolver<void, Context>> = {
     // REPLACE_ME
     myField: () => 'hello',
     rickAndMorty(_, { id }, { dataSources }) {
-        return dataSources.rickAndMorty.getCharacter(id);
-    },
+        if (id) {
+            return dataSources.rickAndMorty.getCharacter(id);
+        } else {
+            return {}; // error
+        }
+    }
 };

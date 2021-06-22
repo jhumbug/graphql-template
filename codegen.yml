@@ -9,7 +9,7 @@ generates:
     ./src/graphql/__generated__/resolver-types.ts:
         config:
             avoidOptionals: true
-            contextType: ../src/graphql/context#Context
+            contextType: ../context#Context
             useIndexSignature: true
         plugins:
             - add: &add

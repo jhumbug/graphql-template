@@ -1,9 +1,13 @@
+// import { RickAndMortyCharacterResolvers } from '../__generated__/resolver-types';
 import { GraphQLFieldResolver } from 'graphql';
 
 import { Context } from '../context';
 
+export const RickAndMortyCharacter: Record<string, GraphQLFieldResolver<Record<string, any>, Context>> = {
+    id({ id }) {
+        return id;
+    },
 
-export const RickAndMortyCharacter: Record<string, GraphQLFieldResolver<any, Context>> = {
     name({ name }) {
         return name;
     },
@@ -12,9 +16,8 @@ export const RickAndMortyCharacter: Record<string, GraphQLFieldResolver<any, Con
         return status;
     },
 
-    species(data) {
-        console.log(data)
-        return data?.species;
+    species({ species }) {
+        return species;
     },
 
     origin({ origin }) {
@@ -23,5 +26,14 @@ export const RickAndMortyCharacter: Record<string, GraphQLFieldResolver<any, Con
 
     image({ image }) {
         return image;
-    }
+    },
+
+    async location(obj, _, { dataSources }) {
+        if (obj?.location?.url) {
+            const locationURLParts = obj.location.url.split('/');
+            const locationID = locationURLParts[locationURLParts.length - 1];
+            const location = await dataSources.rickAndMorty.getLocation(locationID)
+            return location;
+        }
+    },
 };

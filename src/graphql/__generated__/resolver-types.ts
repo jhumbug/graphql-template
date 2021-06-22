@@ -1,7 +1,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { Context } from '../src/graphql/context';
+import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -25,6 +25,14 @@ export enum CacheControlScope {
 }
 
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor: Maybe<Scalars['String']>;
+  endCursor: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   myField: Maybe<Scalars['String']>;
@@ -33,7 +41,7 @@ export type Query = {
 
 
 export type QueryRickAndMortyArgs = {
-  id: Maybe<Scalars['Int']>;
+  id: Maybe<Scalars['String']>;
 };
 
 export type RickAndMortyCharacter = {
@@ -44,12 +52,34 @@ export type RickAndMortyCharacter = {
   species: Maybe<Scalars['String']>;
   origin: Maybe<RickAndMortyCharacterOrigin>;
   image: Maybe<Scalars['String']>;
+  location: Maybe<RickAndMortyLocation>;
 };
 
 export type RickAndMortyCharacterOrigin = {
   __typename?: 'RickAndMortyCharacterOrigin';
   name: Maybe<Scalars['String']>;
   url: Maybe<Scalars['String']>;
+};
+
+export type RickAndMortyLocation = {
+  __typename?: 'RickAndMortyLocation';
+  name: Maybe<Scalars['String']>;
+  dimension: Maybe<Scalars['String']>;
+  url: Maybe<Scalars['String']>;
+};
+
+export type RickAndMortyLocationConnection = {
+  __typename?: 'RickAndMortyLocationConnection';
+  pageInfo: PageInfo;
+  edges: Maybe<Array<Maybe<RickAndMortyLocationEdge>>>;
+  nodes: Maybe<Array<Maybe<RickAndMortyLocation>>>;
+  totalCount: Maybe<Scalars['Int']>;
+};
+
+export type RickAndMortyLocationEdge = {
+  __typename?: 'RickAndMortyLocationEdge';
+  cursor: Scalars['String'];
+  node: Maybe<RickAndMortyLocation>;
 };
 
 
@@ -134,27 +164,35 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   CacheControlScope: CacheControlScope;
   Datetime: ResolverTypeWrapper<Scalars['Datetime']>;
-  Query: ResolverTypeWrapper<{}>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Query: ResolverTypeWrapper<{}>;
   RickAndMortyCharacter: ResolverTypeWrapper<RickAndMortyCharacter>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   RickAndMortyCharacterOrigin: ResolverTypeWrapper<RickAndMortyCharacterOrigin>;
+  RickAndMortyLocation: ResolverTypeWrapper<RickAndMortyLocation>;
+  RickAndMortyLocationConnection: ResolverTypeWrapper<RickAndMortyLocationConnection>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  RickAndMortyLocationEdge: ResolverTypeWrapper<RickAndMortyLocationEdge>;
   Sort: ResolverTypeWrapper<Scalars['Sort']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Datetime: Scalars['Datetime'];
-  Query: {};
+  PageInfo: PageInfo;
+  Boolean: Scalars['Boolean'];
   String: Scalars['String'];
-  Int: Scalars['Int'];
+  Query: {};
   RickAndMortyCharacter: RickAndMortyCharacter;
   ID: Scalars['ID'];
   RickAndMortyCharacterOrigin: RickAndMortyCharacterOrigin;
+  RickAndMortyLocation: RickAndMortyLocation;
+  RickAndMortyLocationConnection: RickAndMortyLocationConnection;
+  Int: Scalars['Int'];
+  RickAndMortyLocationEdge: RickAndMortyLocationEdge;
   Sort: Scalars['Sort'];
-  Boolean: Scalars['Boolean'];
 }>;
 
 export type CacheControlDirectiveArgs = {   maxAge: Maybe<Scalars['Int']>;
@@ -165,6 +203,14 @@ export type CacheControlDirectiveResolver<Result, Parent, ContextType = Context,
 export interface DatetimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Datetime'], any> {
   name: 'Datetime';
 }
+
+export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
+  hasNextPage: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  startCursor: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  endCursor: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   myField: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -178,6 +224,7 @@ export type RickAndMortyCharacterResolvers<ContextType = Context, ParentType ext
   species: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   origin: Resolver<Maybe<ResolversTypes['RickAndMortyCharacterOrigin']>, ParentType, ContextType>;
   image: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  location: Resolver<Maybe<ResolversTypes['RickAndMortyLocation']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -187,15 +234,40 @@ export type RickAndMortyCharacterOriginResolvers<ContextType = Context, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type RickAndMortyLocationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RickAndMortyLocation'] = ResolversParentTypes['RickAndMortyLocation']> = ResolversObject<{
+  name: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dimension: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type RickAndMortyLocationConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RickAndMortyLocationConnection'] = ResolversParentTypes['RickAndMortyLocationConnection']> = ResolversObject<{
+  pageInfo: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  edges: Resolver<Maybe<Array<Maybe<ResolversTypes['RickAndMortyLocationEdge']>>>, ParentType, ContextType>;
+  nodes: Resolver<Maybe<Array<Maybe<ResolversTypes['RickAndMortyLocation']>>>, ParentType, ContextType>;
+  totalCount: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type RickAndMortyLocationEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RickAndMortyLocationEdge'] = ResolversParentTypes['RickAndMortyLocationEdge']> = ResolversObject<{
+  cursor: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node: Resolver<Maybe<ResolversTypes['RickAndMortyLocation']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export interface SortScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Sort'], any> {
   name: 'Sort';
 }
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
   Datetime: GraphQLScalarType;
+  PageInfo: PageInfoResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
   RickAndMortyCharacter: RickAndMortyCharacterResolvers<ContextType>;
   RickAndMortyCharacterOrigin: RickAndMortyCharacterOriginResolvers<ContextType>;
+  RickAndMortyLocation: RickAndMortyLocationResolvers<ContextType>;
+  RickAndMortyLocationConnection: RickAndMortyLocationConnectionResolvers<ContextType>;
+  RickAndMortyLocationEdge: RickAndMortyLocationEdgeResolvers<ContextType>;
   Sort: GraphQLScalarType;
 }>;
 

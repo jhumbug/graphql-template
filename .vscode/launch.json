@@ -12,7 +12,7 @@
       "address": "0.0.0.0",
       "port": 9229,
       "localRoot": "${workspaceFolder}",
-      "remoteRoot": "/usr/local/aswim/app",
+      "remoteRoot": "/usr/local/gql/app",
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],

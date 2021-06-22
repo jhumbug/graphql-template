@@ -7,7 +7,7 @@
       "label": "Reinstall node_modules in Docker Local",
       "detail": "Install dependencies without rebuilding container",
       "type": "shell",
-      "command": "docker-compose -f docker-compose.local.yml exec -w /usr/local/aswim app yarn install",
+      "command": "docker-compose -f docker-compose.local.yml exec -w /usr/local/gql app yarn install",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
